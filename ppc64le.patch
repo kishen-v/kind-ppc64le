@@ -1,0 +1,32 @@
+diff --git a/images/Makefile.common.in b/images/Makefile.common.in
+index 821d9c53..ce6808bb 100644
+--- a/images/Makefile.common.in
++++ b/images/Makefile.common.in
+@@ -31,7 +31,7 @@ GO_VERSION=$(shell cat $(CURDIR)/../../.go-version | head -n1)
+ export DOCKER_CLI_EXPERIMENTAL=enabled
+ 
+ # build with buildx
+-PLATFORMS?=linux/amd64,linux/arm64
++PLATFORMS?=linux/ppc64le
+ OUTPUT?=
+ PROGRESS=auto
+ EXTRA_BUILD_OPT?=
+diff --git a/images/base/Dockerfile b/images/base/Dockerfile
+index e9440cb1..ee5ec8bd 100644
+--- a/images/base/Dockerfile
++++ b/images/base/Dockerfile
+@@ -108,10 +108,10 @@ COPY --chmod=0755 scripts/third_party/gimme/gimme /usr/local/bin/
+ COPY --chmod=0755 scripts/target-cc /usr/local/bin/
+ # tools needed at build-time only
+ # first ensure we can install packages for both architectures
+-RUN dpkg --add-architecture arm64 && dpkg --add-architecture amd64 \
+-    && clean-install bash ca-certificates curl git make pkg-config \
+-    crossbuild-essential-amd64 crossbuild-essential-arm64 \
+-    libseccomp-dev:amd64 libseccomp-dev:arm64
++RUN dpkg --add-architecture ppc64el \
++    && clean-install bash ca-certificates curl git make pkg-config gcc \
++    crossbuild-essential-ppc64el \
++    libseccomp-dev:ppc64el
+ # set by makefile to .go-version
+ ARG GO_VERSION
+ RUN eval "$(gimme "${GO_VERSION}")" \
