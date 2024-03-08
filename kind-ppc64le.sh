@@ -1,12 +1,18 @@
 #!/bin/bash
 
-git clone --depth=1 https://github.com/kubernetes-sigs/kind.git
+git submodule update --init
 cd kind
-git apply ../ppc64le.patch
+git apply ../build-ppc64le.patch
+cd images
 echo "Building base image"
-cd images/base && REGISTRY=quay.io/kviswana make push
-cd images/kindnet && REGISTRY=quay.io/kviswana make push
-cd images/haproxy && REGISTRY=quay.io/kviswana make push
-cd images/local-path-helper && REGISTRY=quay.io/kviswana make push
-cd images/local-path-provisioner && REGISTRY=quay.io/kviswana make push
-echo "All images built"
+pushd base && TAG=latest REGISTRY=quay.io/kviswana make push
+popd
+pushd kindnet && TAG=latest REGISTRY=quay.io/kviswana make push
+popd
+pushd haproxy && TAG=latest REGISTRY=quay.io/kviswana make push
+popd
+pushd local-path-helper && TAG=latest REGISTRY=quay.io/kviswana make push
+popd
+pushd local-path-provisioner && TAG=latest REGISTRY=quay.io/kviswana make push
+popd
+echo "All images  built"
